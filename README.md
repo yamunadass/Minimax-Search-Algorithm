@@ -1,6 +1,6 @@
 <h1>ExpNo 5 : Implement Minimax Search Algorithm for a Simple TIC-TAC-TOE game</h1> 
-<h3>Name:           </h3>
-<h3>Register Number/Staff Id:          </h3>
+<h3>Name: Yamuna M</h3>
+<h3>Register Number: 212223230248</h3>
 <H3>Aim:</H3>
 <p>
     Implement Minimax Search Algorithm for a Simple TIC-TAC-TOE game
@@ -76,31 +76,131 @@ Simple enough, return +10 if the current player wins the game, -10 if the other 
 
 And now the actual minimax algorithm; note that in this implementation a choice or move is simply a row / column address on the board, for example [0,2] is the top right square on a 3x3 board.
 
-def minimax(game)
-    return score(game) if game.over?
-    scores = [] # an array of scores
-    moves = []  # an array of moves
+```
+def initialize_game():
+    current_state = [['.','.','.'],['.','.','.'],['.','.','.']]
+    player_turn = 'X'
+def drawboard():
+    for i in range(3):
+        for j in range(3):
+            print("{}|".format(current_state[i][j]),end="")
+        print()
+def isvalid(px,py):
+    if px<0 or px>2 or py<0 or py>2:
+        return False
+    elif current_state[px][py]!='.':
+        return False
+    else:
+        return True
+def is_end():
+    #vertical win
+    for i in range(3):
+        if (current_state[0][i]!='.' and current_state[0][i]==current_state[1][i] and
+            current_state[1][i]==current_state[2][i]):
+            return current_state[0][i]
+    #horizontal win
+    for i in range(3):
+        if current_state[i]==['X','X','X']:
+            return 'X'
+        elif current_state[i]==['O','O','O']:
+            return 'O'
+    #inverse diagonal win
+    for i in range(3):
+        if (current_state[0][2]==current_state[1][1] and current_state[1][1]==current_state[2][0]
+            and current_state[0][2]!='.'):
+            return current_state[0][2]
+    #diagonal win
+    for i in range(3):
+        if (current_state[0][0]==current_state[1][1] and current_state[1][1]==current_state[2][2]
+            and current_state[0][0]!='.'):
+            return current_state[0][0]
+    #check for board
+    for i in range(3):
+        for j in range(3):
+            if current_state[i][j]=='.':
+                return None
+    return '.' #it is a tie
+def minimum():
+    minv=2
+    qx=None
+    qy=None
+    result=is_end()
+    if result=='X':
+        return(-1,0,0)
+    elif result=='O':
+        return(+1,0,0)
+    elif result=='.':
+        return(0,0,0)
+    for i in range(3):
+        for j in range(3):
+            if current_state[i][j]=='.':
+                current_state[i][j]='X'
+                (m,min_i,min_j)=maximum()
+                if m<minv:
+                    minv=m
+                    qx=i
+                    qy=j
+                current_state[i][j]='.'
+    return (minv,qx,qy)
+def maximum():
+    maxv=-2
+    px=None
+    py=None
+    result=is_end()
+    if result=='X':
+        return(-1,0,0)
+    elif result=='O':
+        return(+1,0,0)
+    elif result=='.':
+        return(0,0,0)
+    for i in range(3):
+        for j in range(3):
+            if current_state[i][j]=='.':
+                current_state[i][j]='O'
+                (m,max_i,max_j)=minimum()
+                if m>maxv:
+                    maxv=m
+                    px=i
+                    py=j
+                current_state[i][j]='.'
+    return (maxv,px,py)
+def play():
+    #initialize_game()
+    #drawboard()
+    player_turn = 'X'
+    while True:
+        result = is_end()
+        drawboard()
+        if result != None:
+            if result == 'X':
+                print("The winner is X")
+            elif result == 'O':
+                print("The winner is O")
+            else:
+                print("It is a tie!")
+            initialize_game()
+            return
+        if player_turn == 'X':
+            (m,qx,qy)=minimum()
+            while True:
+                print("x:{},y:{}".format(qx,qy))
+                px = int(input())
+                py = int(input())
+                (qx, qy) = (px, py)
+                if isvalid(px,py):
+                    current_state[px][py]='X'
+                    player_turn = 'O'
+                    break
+                else:
+                    print("Enter correct values for x and y")
+        else:
+            (m,px,py)=maximum()
+            current_state[px][py]='O'
+            player_turn='X'
+current_state = [['.','.','.'],['.','.','.'],['.','.','.']]
+play()
 
-    # Populate the scores array, recursing as needed
-    game.get_available_moves.each do |move|
-        possible_game = game.get_new_state(move)
-        scores.push minimax(possible_game)
-        moves.push move
-    end
-
-    # Do the min or the max calculation
-    if game.active_turn == @player
-        # This is the max calculation
-        max_score_index = scores.each_with_index.max[1]
-        @choice = moves[max_score_index]
-        return scores[max_score_index]
-    else
-        # This is the min calculation
-        min_score_index = scores.each_with_index.min[1]
-        @choice = moves[min_score_index]
-        return scores[min_score_index]
-    end
-end
+```
 
 <hr>
 <h2>Sample Input and Output</h2>
@@ -112,5 +212,10 @@ end
 ![image](https://github.com/natsaravanan/19AI405FUNDAMENTALSOFARTIFICIALINTELLIGENCE/assets/87870499/a2acb6a1-ed8e-42e5-8968-fe805e4b0255)
 
 <hr>
+
+## Output:
+
+<img width="303" height="674" alt="image" src="https://github.com/user-attachments/assets/d9a85b13-cad4-47c8-b0e6-bf661bcc021c" />
+
 <h2>Result:</h2>
 <p>Thus,Implementation of  Minimax Search Algorithm for a Simple TIC-TAC-TOE game wasa done successfully.</p>
